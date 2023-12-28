@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  psql-db:
+    image: postgres
+    container_name: psql-db
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1199
+      - POSTGRES_DB=doc_bill_db
+    ports:
+      - '5432:5432'
+
+  crow:
+    container_name: doc_bill_co
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8081:9004'
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://psql-db:5432/doc_bill_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=1199
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      - psql-db
